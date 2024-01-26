@@ -1,7 +1,7 @@
 #include <ModbusMaster.h>
 
-#define MAX485_DE 19
-#define MAX485_RE_NEG 20
+#define MAX485_DE 18
+#define MAX485_RE_NEG 19
 
 #define MODBUS_DIR_PIN 4 // connect DR, RE pin of MAX485 to gpio 4
 #define MODBUS_RX_PIN 18 // Rx pin
