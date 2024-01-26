@@ -92,7 +92,7 @@ void loop()
     uint16_t data[45]; // Array to store the read data
 
     // Read words 0 to 44 (registers 0 to 43) from Modbus slave with ID 1
-    uint8_t result = node.readHoldingRegisters(0, 45, data);
+    uint8_t result = node.readHoldingRegisters(0, 45);
 
     if (result == node.ku8MBSuccess)
     {
@@ -102,7 +102,7 @@ void loop()
             Serial.print("Word ");
             Serial.print(i);
             Serial.print(": ");
-            Serial.print(data[i]);
+            Serial.print(node.getResponseBuffer(i));
             Serial.print(" - ");
             Serial.print(registerInfo[i].label);
             Serial.print(" (");
