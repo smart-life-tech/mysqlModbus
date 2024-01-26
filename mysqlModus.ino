@@ -3,8 +3,12 @@
 #define MAX485_DE 19
 #define MAX485_RE_NEG 20
 
+#define MODBUS_DIR_PIN 4 // connect DR, RE pin of MAX485 to gpio 4
+#define MODBUS_RX_PIN 18 // Rx pin
+#define MODBUS_TX_PIN 19 // Tx pin
 ModbusMaster node;
 
+#define MODBUS_SERIAL_BAUD 9600 
 struct RegisterInfo
 {
     const char *label;
@@ -61,6 +65,18 @@ RegisterInfo registerInfo[] = {
     {"Power limit", "R/W", "0~10 Kw", "", "Unsigned Integer"},
     {"Error reset", "R/W", "0: Does not clear fault/1: Clear fault", "", "Unsigned Integer"}};
 
+void modbusPreTransmission()
+{
+    delay(500);
+    digitalWrite(MODBUS_DIR_PIN, HIGH);
+}
+// Pin 4 made low for Modbus receive mode
+void modbusPostTransmission()
+{
+    digitalWrite(MODBUS_DIR_PIN, LOW);
+    delay(500);
+}
+
 void preTransmission()
 {
     digitalWrite(MAX485_RE_NEG, 1);
@@ -82,6 +98,14 @@ void setup()
 
     Serial.begin(115200);
 
+    pinMode(MODBUS_DIR_PIN, OUTPUT);
+    digitalWrite(MODBUS_DIR_PIN, LOW);
+
+    // Serial2.begin(baud-rate, protocol, RX pin, TX pin);.
+    Serial2.begin(MODBUS_SERIAL_BAUD, SERIAL_8E1, MODBUS_RX_PIN, MODBUS_TX_PIN);
+    Serial2.setTimeout(200);
+    // modbus slave ID 14
+    node.begin(14, Serial2);
     node.begin(1, Serial);
     node.preTransmission(preTransmission);
     node.postTransmission(postTransmission);
